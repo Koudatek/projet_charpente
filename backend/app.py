@@ -1,0 +1,34 @@
+from flask import Flask, request, jsonify, send_from_directory
+from flask_cors import CORS
+import os
+from truss_analyzer import TrussAnalyzer
+
+app = Flask(__name__)
+CORS(app)
+
+STATIC_DIR = os.path.join(os.path.dirname(__file__), 'static')
+
+@app.route('/calculate', methods=['POST'])
+def calculate():
+    params = request.get_json()
+    analyzer = TrussAnalyzer()
+    try:
+        results = analyzer.run_analysis(params)
+        return jsonify(results)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+@app.route('/generate_pdf', methods=['POST'])
+def generate_pdf():
+    params = request.get_json()
+    analyzer = TrussAnalyzer()
+    try:
+        analyzer.run_analysis(params)
+        pdf_path = analyzer.generate_pdf_report()
+        filename = os.path.basename(pdf_path)
+        return send_from_directory(STATIC_DIR, filename, as_attachment=True)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+if __name__ == '__main__':
+    app.run(debug=True) 
