@@ -4,7 +4,8 @@ import os
 from truss_analyzer import TrussAnalyzer
 
 app = Flask(__name__)
-CORS(app)
+
+CORS(app, origins=["https://trussanalyzer.onrender.com"])
 
 STATIC_DIR = os.path.join(os.path.dirname(__file__), 'static')
 
