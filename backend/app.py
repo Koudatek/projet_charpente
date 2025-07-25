@@ -21,6 +21,7 @@ def calculate():
 @app.route('/generate_pdf', methods=['POST'])
 def generate_pdf():
     params = request.get_json()
+    print('PARAMS REÇUS POUR PDF:', params)
     analyzer = TrussAnalyzer()
     try:
         analyzer.run_analysis(params)
@@ -28,6 +29,7 @@ def generate_pdf():
         filename = os.path.basename(pdf_path)
         return send_from_directory(STATIC_DIR, filename, as_attachment=True)
     except Exception as e:
+        print('ERREUR PDF:', e)
         return jsonify({"error": str(e)}), 400
 
 if __name__ == '__main__':
