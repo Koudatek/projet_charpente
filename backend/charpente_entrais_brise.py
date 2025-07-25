@@ -7,6 +7,15 @@ from matplotlib.patches import Circle, Polygon, Rectangle
 from matplotlib.backends.backend_pdf import PdfPages
 import datetime
 
+# Police et style global pour tout le PDF
+plt.rcParams['font.family'] = 'Arial'
+plt.rcParams['font.size'] = 12
+plt.rcParams['axes.titlesize'] = 16
+plt.rcParams['axes.labelsize'] = 13
+plt.rcParams['axes.titleweight'] = 'bold'
+plt.rcParams['figure.titlesize'] = 18
+plt.rcParams['figure.titleweight'] = 'bold'
+
 class TrussAnalyzer:
     def __init__(self):
         self.geometry_type = "howe"  # défaut
@@ -920,28 +929,28 @@ class TrussAnalyzer:
     def generate_pdf_report(self, filename="rapport_charpente.pdf"):
         """Génération du rapport PDF complet"""
         with PdfPages(filename) as pdf:
+            page_num = 1
             # Page de titre
             fig_title = plt.figure(figsize=(8.5, 11))
-            fig_title.text(0.5, 0.8, 'RAPPORT D\'ANALYSE', ha='center', fontsize=24, fontweight='bold')
-            fig_title.text(0.5, 0.75, 'CHARPENTE TRIANGULÉE', ha='center', fontsize=20, fontweight='bold')
-            fig_title.text(0.5, 0.7, f'Date: {datetime.datetime.now().strftime("%d/%m/%Y")}', ha='center', fontsize=12)
-            fig_title.text(0.5, 0.66, f'Projet : {self.nom_projet}', ha='center', fontsize=12)
-            fig_title.text(0.5, 0.63, f'Ingénieur : {self.nom_ingenieur}', ha='center', fontsize=12)
-            fig_title.text(0.5, 0.60, f'Type de structure : {self.geometry_type.capitalize()}', ha='center', fontsize=12)
+            fig_title.subplots_adjust(left=0.08, right=0.92, top=0.95, bottom=0.08)
+            fig_title.text(0.96, 0.02, f'Projet: {self.nom_projet} | Page {page_num}', ha='right', fontsize=9, color='gray')
+            fig_title.text(0.5, 0.8, 'RAPPORT D\'ANALYSE', ha='center', fontsize=28, fontweight='bold')
+            fig_title.text(0.5, 0.75, 'CHARPENTE TRIANGULÉE', ha='center', fontsize=22, fontweight='bold')
+            fig_title.text(0.5, 0.7, f'Date: {datetime.datetime.now().strftime("%d/%m/%Y")}', ha='center', fontsize=13)
+            fig_title.text(0.5, 0.66, f'Projet : {self.nom_projet}', ha='center', fontsize=13)
+            fig_title.text(0.5, 0.63, f'Ingénieur : {self.nom_ingenieur}', ha='center', fontsize=13)
+            fig_title.text(0.5, 0.60, f'Type de structure : {self.geometry_type.capitalize()}', ha='center', fontsize=13)
 
             # Données de modélisation
-            fig_title.text(0.1, 0.56, 'DONNÉES DE MODÉLISATION:', fontsize=14, fontweight='bold')
-            fig_title.text(0.1, 0.52, f'• Demi-portée L = {self.L} m', fontsize=12)
-           # fig_title.text(0.1, 0.49, f'• Angle d\'inclinaison θ = {self.theta_deg}°', fontsize=12)
-            fig_title.text(0.1, 0.46, f'• Hauteur calculée H = {self.H:.3f} m', fontsize=12)
-
-            fig_title.text(0.1, 0.43, f'• Nombre d\'entraxes m = {self.m}', fontsize=12)
-            fig_title.text(0.1, 0.40, f'• Charge nodale F = {self.F} N', fontsize=12)
+            fig_title.text(0.1, 0.56, 'DONNÉES DE MODÉLISATION:', fontsize=15, fontweight='bold')
+            fig_title.text(0.1, 0.52, f'• Demi-portée L = {self.L} m', fontsize=13)
+            fig_title.text(0.1, 0.46, f'• Hauteur calculée H = {self.H:.3f} m', fontsize=13)
+            fig_title.text(0.1, 0.43, f'• Nombre d\'entraxes m = {self.m}', fontsize=13)
+            fig_title.text(0.1, 0.40, f'• Charge nodale F = {self.F} N', fontsize=13)
 
             # Propriétés des matériaux
-            fig_title.text(0.1, 0.37, 'PROPRIÉTÉS DES MATÉRIAUX:', fontsize=14, fontweight='bold')
-            fig_title.text(0.1, 0.34, f'• Module d\'Young E = {self.E/1e9:.0f} GPa', fontsize=12)
-            fig_title.text(0.1, 0.34, f'• Module d\'Young E = {self.E/1e9:.0f} GPa', fontsize=12)
+            fig_title.text(0.1, 0.37, 'PROPRIÉTÉS DES MATÉRIAUX:', fontsize=15, fontweight='bold')
+            fig_title.text(0.1, 0.34, f'• Module d\'Young E = {self.E/1e9:.0f} GPa', fontsize=13)
 
             # Nouvelle ligne : section + R admissible
             epsilon_max = 0.001
@@ -950,62 +959,86 @@ class TrussAnalyzer:
                 R = self.E * A * epsilon_max  # en N
                 A_cm2 = A * 1e4
                 R_kN = R / 1000
-                fig_title.text(0.1, y_pos, f'• {bar_type.capitalize()} : A = {A_cm2:.1f} cm²   |   R ≤ {R_kN:.1f} kN', fontsize=12)
+                fig_title.text(0.1, y_pos, f'• {bar_type.capitalize()} : A = {A_cm2:.1f} cm²   |   R ≤ {R_kN:.1f} kN', fontsize=13)
                 y_pos -= 0.03
 
             # Statistiques de la structure
-            fig_title.text(0.1, 0.18, 'STATISTIQUES DE LA STRUCTURE:', fontsize=14, fontweight='bold')
-            fig_title.text(0.1, 0.14, f'• Nombre de nœuds: {len(self.nodes)}', fontsize=12)
-            fig_title.text(0.1, 0.11, f'• Nombre de barres: {len(self.bar_data)}', fontsize=12)
-            fig_title.text(0.1, 0.08, f'• Portée totale: {2*self.L} m', fontsize=12)
+            fig_title.text(0.1, 0.18, 'STATISTIQUES DE LA STRUCTURE:', fontsize=15, fontweight='bold')
+            fig_title.text(0.1, 0.14, f'• Nombre de nœuds: {len(self.nodes)}', fontsize=13)
+            fig_title.text(0.1, 0.11, f'• Nombre de barres: {len(self.bar_data)}', fontsize=13)
+            fig_title.text(0.1, 0.08, f'• Portée totale: {2*self.L} m', fontsize=13)
 
+            # Pied de page
+            fig_title.text(0.96, 0.02, f'Projet: {self.nom_projet} | Page {page_num}', ha='right', fontsize=9, color='gray')
             plt.axis('off')
             pdf.savefig(fig_title, bbox_inches='tight')
             plt.close(fig_title)
+            page_num += 1
 
             # Structure initiale
             fig_struct = self.plot_structure_initial()
+            fig_struct.subplots_adjust(left=0.08, right=0.92, top=0.95, bottom=0.08)
+            fig_struct.text(0.96, 0.02, f'Projet: {self.nom_projet} | Page {page_num}', ha='right', fontsize=9, color='gray')
             pdf.savefig(fig_struct, bbox_inches='tight')
             plt.close(fig_struct)
+            page_num += 1
 
             # Structure déformée
             fig_deformed = self.plot_deformed_structure()
+            fig_deformed.subplots_adjust(left=0.08, right=0.92, top=0.95, bottom=0.08)
+            fig_deformed.text(0.96, 0.02, f'Projet: {self.nom_projet} | Page {page_num}', ha='right', fontsize=9, color='gray')
             pdf.savefig(fig_deformed, bbox_inches='tight')
             plt.close(fig_deformed)
+            page_num += 1
 
             # Structure colorée par sollicitation
             fig_stress = self.plot_stress_colored()
+            fig_stress.subplots_adjust(left=0.08, right=0.92, top=0.95, bottom=0.08)
+            fig_stress.text(0.96, 0.02, f'Projet: {self.nom_projet} | Page {page_num}', ha='right', fontsize=9, color='gray')
             pdf.savefig(fig_stress, bbox_inches='tight')
             plt.close(fig_stress)
+            page_num += 1
 
             # Diagrammes des barres
             bar_figs = self.plot_bar_diagrams()
             for fig in bar_figs:
+                fig.subplots_adjust(left=0.08, right=0.92, top=0.95, bottom=0.08)
+                fig.text(0.96, 0.02, f'Projet: {self.nom_projet} | Page {page_num}', ha='right', fontsize=9, color='gray')
                 pdf.savefig(fig, bbox_inches='tight')
                 plt.close(fig)
+                page_num += 1
+
+            # Les pages suivantes sont générées par des fonctions qui créent leurs propres figures
+            # On modifie ces fonctions pour ajouter marges et pied de page
+            def add_footer_and_margins(fig, page_num):
+                fig.subplots_adjust(left=0.08, right=0.92, top=0.95, bottom=0.08)
+                fig.text(0.96, 0.02, f'Projet: {self.nom_projet} | Page {page_num}', ha='right', fontsize=9, color='gray')
 
             # Page des nœuds
-            self._add_nodes_page(pdf)
+            self._add_nodes_page(pdf, add_footer_and_margins, page_num)
+            page_num += (len(self.nodes) - 1) // 25 + 1
 
             # Page des barres
-            self._add_bars_page(pdf)
+            self._add_bars_page(pdf, add_footer_and_margins, page_num)
+            page_num += (len(self.bar_data) - 1) // 25 + 1
 
             # Pages des matrices de rigidité
-            self._add_stiffness_matrices_pages(pdf)
+            self._add_stiffness_matrices_pages(pdf, add_footer_and_margins, page_num)
+            # Le nombre de pages dépend du contenu, on ne l'incrémente pas ici
 
             # Page des résultats - déplacements
-            self._add_displacements_page(pdf)
+            self._add_displacements_page(pdf, add_footer_and_margins, page_num)
 
             # Page des résultats - sollicitations
-            self._add_forces_page(pdf)
+            self._add_forces_page(pdf, add_footer_and_margins, page_num)
 
             # Page des verification contrainte
-            self._add_resistance_check_page(pdf)
+            self._add_resistance_check_page(pdf, add_footer_and_margins, page_num)
 
             # Page des réactions
-            self._add_reactions_page(pdf)
+            self._add_reactions_page(pdf, add_footer_and_margins, page_num)
 
-    def _add_nodes_page(self, pdf):
+    def _add_nodes_page(self, pdf, add_footer_and_margins, page_num):
         """Ajouter les pages des nœuds avec pagination"""
         nodes_per_page = 25
         node_index = 0
@@ -1053,10 +1086,11 @@ class TrussAnalyzer:
                 node_index += 1
 
             plt.axis('off')
+            add_footer_and_margins(fig, page_num)
             pdf.savefig(fig, bbox_inches='tight')
             plt.close(fig)
 
-    def _add_bars_page(self, pdf):
+    def _add_bars_page(self, pdf, add_footer_and_margins, page_num):
         """Ajouter la page des barres avec pagination"""
         bars_per_page = 25
         total_bars = len(self.bar_data)
@@ -1097,11 +1131,12 @@ class TrussAnalyzer:
                 bar_index += 1
 
             plt.axis('off')
+            add_footer_and_margins(fig, page_num)
             pdf.savefig(fig, bbox_inches='tight')
             plt.close(fig)
 
 
-    def _add_stiffness_matrices_pages(self, pdf):
+    def _add_stiffness_matrices_pages(self, pdf, add_footer_and_margins, page_num):
         """Ajouter les pages des matrices de rigidité"""
         # Matrices locales (quelques exemples)
         bars_to_show = self.bar_data # Montrer toutes les barres
@@ -1142,6 +1177,7 @@ class TrussAnalyzer:
                             fontsize=9, ha='center')
 
             plt.axis('off')
+            add_footer_and_margins(fig, page_num)
             pdf.savefig(fig, bbox_inches='tight')
             plt.close(fig)
 
@@ -1157,10 +1193,11 @@ class TrussAnalyzer:
         ax.set_ylabel('DOF i')
         plt.colorbar(im, ax=ax, shrink=0.8)
 
+        add_footer_and_margins(fig, page_num)
         pdf.savefig(fig, bbox_inches='tight')
         plt.close(fig)
 
-    def _add_displacements_page(self, pdf):
+    def _add_displacements_page(self, pdf, add_footer_and_margins, page_num):
         """Ajouter les pages des déplacements avec pagination"""
         nodes_per_page = 25
         node_index = 0
@@ -1203,10 +1240,11 @@ class TrussAnalyzer:
                          bbox=dict(boxstyle="round,pad=0.3", facecolor='lightblue'))
 
             plt.axis('off')
+            add_footer_and_margins(fig, page_num)
             pdf.savefig(fig, bbox_inches='tight')
             plt.close(fig)
 
-    def _add_forces_page(self, pdf):
+    def _add_forces_page(self, pdf, add_footer_and_margins, page_num):
         """Ajouter les pages des sollicitations"""
         bar_index = 0
         bars_par_page = 25  # Nombre approximatif de barres par page
@@ -1255,10 +1293,11 @@ class TrussAnalyzer:
                          bbox=dict(boxstyle="round,pad=0.3", facecolor='lightgreen'))
 
             plt.axis('off')
+            add_footer_and_margins(fig, page_num)
             pdf.savefig(fig, bbox_inches='tight')
             plt.close(fig)
 
-    def _add_resistance_check_page(self, pdf):
+    def _add_resistance_check_page(self, pdf, add_footer_and_margins, page_num):
         """Ajouter des pages de vérification de la tenue à la résistance"""
         bars_per_page = 25
         epsilon_max = 0.001
@@ -1332,10 +1371,11 @@ class TrussAnalyzer:
                 page_index += 1
 
             plt.axis('off')
+            add_footer_and_margins(fig, page_num)
             pdf.savefig(fig, bbox_inches='tight')
             plt.close(fig)
 
-    def _add_reactions_page(self, pdf):
+    def _add_reactions_page(self, pdf, add_footer_and_margins, page_num):
         """Ajouter la page des réactions"""
         fig = plt.figure(figsize=(8.5, 11))
         fig.text(0.5, 0.95, 'RÉACTIONS AUX APPUIS', ha='center', fontsize=16, fontweight='bold')
@@ -1391,6 +1431,7 @@ class TrussAnalyzer:
                          facecolor='lightgreen' if equilibrium_check else 'lightcoral'))
 
         plt.axis('off')
+        add_footer_and_margins(fig, page_num)
         pdf.savefig(fig, bbox_inches='tight')
         plt.close(fig)
 
