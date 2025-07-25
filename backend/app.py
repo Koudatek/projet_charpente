@@ -8,6 +8,10 @@ CORS(app)
 
 STATIC_DIR = os.path.join(os.path.dirname(__file__), 'static')
 
+@app.route('/')
+def index():
+    return 'Backend projet-charpente opérationnel !'
+
 @app.route('/calculate', methods=['POST'])
 def calculate():
     params = request.get_json()
@@ -33,4 +37,5 @@ def generate_pdf():
         return jsonify({"error": str(e)}), 400
 
 if __name__ == '__main__':
-    app.run(debug=True) 
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port) 
